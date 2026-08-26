@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Mausam — weather, understood." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Mausam — Weather, understood.</title>
+</head>
+<body>
+  <div id="app-shell" class="shell state-partly-cloudy">
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="grain"></div>
+
+    <header class="topbar glass">
+      <button class="icon-btn" id="locationBtn" aria-label="Change location" title="Change location">⌖</button>
+      <div class="location-meta">
+        <span id="locationName">Jaipur</span>
+        <small id="locationSub">India</small>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Search places" title="Search">⌕</button>
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">⚙</button>
+      </div>
+    </header>
+
+    <main id="main" class="main">
+      <section id="homeView" class="view active">
+        <section class="hero">
+          <div class="hero-topline">
+            <span id="greeting">Good evening</span>
+            <span class="live-dot">Live</span>
+          </div>
+          <div class="temperature" id="currentTemp">27°</div>
+          <div class="condition" id="currentCondition">Mostly cloudy</div>
+          <div class="hi-lo" id="hiLo">H 32° · L 26°</div>
+          <p class="hero-summary" id="heroSummary">Warm and humid. Your morning window will be better for outdoor plans.</p>
+          <div class="hero-actions">
+            <button class="pill" id="refreshBtn">↻ <span>Refresh</span></button>
+            <button class="pill" id="modeBtn">◎ <span id="modeLabel">Human</span></button>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">TODAY FOR YOU</div>
+              <h2>What should you do?</h2>
+            </div>
+            <button class="text-btn" id="personalizeBtn">Personalize</button>
+          </div>
+          <div class="recommendation-scroller" id="recommendations"></div>
+        </section>
+
+        <section class="section-block card glass">
+          <div class="section-head compact">
+            <div>
+              <div class="eyebrow">SMART WEATHER</div>
+              <h2>Built around your day</h2>
+            </div>
+            <button class="text-btn" id="explainScoresBtn">Why?</button>
+          </div>
+          <div class="score-grid" id="scoreGrid"></div>
+        </section>
+
+        <section class="section-block card glass">
+          <div class="section-head compact">
+            <div>
+              <div class="eyebrow">HOURLY</div>
+              <h2>Today</h2>
+            </div>
+            <div class="segmented" role="tablist" aria-label="Hourly metric">
+              <button class="seg active" data-hour-mode="temp">Temp</button>
+              <button class="seg" data-hour-mode="rain">Rain</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><svg id="hourlyChart" viewBox="0 0 900 220" preserveAspectRatio="none" aria-label="Hourly temperature chart"></svg></div>
+          <div class="hourly-row" id="hourlyRow"></div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">DETAILS</div>
+              <h2>Understand the conditions</h2>
+            </div>
+            <button class="text-btn" id="detailsToggle">Precise</button>
+          </div>
+          <div class="metric-grid" id="metricGrid"></div>
+        </section>
+
+        <section class="section-block card glass">
+          <div class="section-head compact">
+            <div>
+              <div class="eyebrow">DAILY</div>
+              <h2>Next 7 days</h2>
+            </div>
+            <span class="muted" id="updateStamp">Updating…</span>
+          </div>
+          <div class="daily-list" id="dailyList"></div>
+        </section>
+      </section>
+
+      <section id="mapView" class="view">
+        <div class="page-intro">
+          <div class="eyebrow">WEATHER MAP</div>
+          <h1>See the atmosphere move.</h1>
+          <p>Precipitation-style visualization with a lightweight mobile-first interaction.</p>
+        </div>
+        <div class="map-card glass" id="mapCard">
+          <div class="map-toolbar">
+            <div class="segmented wide" id="mapLayers">
+              <button class="seg active" data-map-layer="rain">Rain</button>
+              <button class="seg" data-map-layer="wind">Wind</button>
+              <button class="seg" data-map-layer="temp">Temp</button>
+            </div>
+            <button class="icon-btn subtle" id="centerMapBtn">◎</button>
+          </div>
+          <div class="fake-map">
+            <div class="map-grid"></div>
+            <div class="map-land land-a"></div><div class="map-land land-b"></div><div class="map-land land-c"></div>
+            <div class="radar radar-a"></div><div class="radar radar-b"></div><div class="radar radar-c"></div>
+            <div class="map-pin" title="Current location"></div>
+            <div class="map-label label-jaipur">Your location</div>
+            <div class="map-bottom glass">
+              <span id="mapCaption">Light rain nearby · moving east</span>
+              <span class="muted">Now</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="placesView" class="view">
+        <div class="page-intro">
+          <div class="eyebrow">PLACES</div>
+          <h1>Your weather, everywhere.</h1>
+          <p>Save destinations and jump between them in one tap.</p>
+        </div>
+        <div class="search-box glass"><span>⌕</span><input id="placeSearch" placeholder="Search for a city or airport" autocomplete="off" /></div>
+        <div id="savedPlaces" class="place-list"></div>
+      </section>
+
+      <section id="insightsView" class="view">
+        <div class="page-intro">
+          <div class="eyebrow">INSIGHTS</div>
+          <h1>Weather, translated.</h1>
+          <p>Personalized intelligence instead of a wall of numbers.</p>
+        </div>
+        <div class="insight-grid" id="insightGrid"></div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="page-intro">
+          <div class="eyebrow">SETTINGS</div>
+          <h1>Make Mausam yours.</h1>
+          <p>Control units, tone, personalization and motion.</p>
+        </div>
+        <div class="settings-card glass" id="settingsCard"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav glass" aria-label="Primary">
+      <button class="nav-item active" data-view="homeView"><span>⌂</span><small>Home</small></button>
+      <button class="nav-item" data-view="mapView"><span>◌</span><small>Map</small></button>
+      <button class="nav-item" data-view="placesView"><span>⌖</span><small>Places</small></button>
+      <button class="nav-item" data-view="insightsView"><span>✦</span><small>Insights</small></button>
+    </nav>
+
+    <div id="searchSheet" class="sheet-backdrop hidden">
+      <div class="sheet glass">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head"><h2>Find a place</h2><button class="icon-btn subtle" data-close-sheet>×</button></div>
+        <div class="search-box"><span>⌕</span><input id="globalSearch" placeholder="City, airport, destination…" autofocus /></div>
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </div>
+
+    <div id="personalizeSheet" class="sheet-backdrop hidden">
+      <div class="sheet glass">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head"><h2>What matters to you?</h2><button class="icon-btn subtle" data-close-sheet>×</button></div>
+        <p class="muted">Mausam will reorder recommendations around your interests.</p>
+        <div class="chip-grid" id="interestChips"></div>
+        <button class="primary-btn" id="saveInterestsBtn">Save preferences</button>
+      </div>
+    </div>
+
+    <div id="settingsSheet" class="sheet-backdrop hidden">
+      <div class="sheet glass">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head"><h2>Settings</h2><button class="icon-btn subtle" data-close-sheet>×</button></div>
+        <div id="sheetSettings"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast">Saved</div>
+  </div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
